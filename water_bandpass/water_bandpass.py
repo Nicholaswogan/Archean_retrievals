@@ -4,8 +4,8 @@ import time
 
 import rfast
 
-r = rfast.Rfast('water_bandpass/inputs.scr')
-r.initialize_retrieval("water_bandpass/rpars.txt")
+r = rfast.Rfast('inputs.scr')
+r.initialize_retrieval("rpars.txt")
 
 def get_filename(root_dir, CH4, res, snr):
     file = ('CH4=%.4e'%CH4)+"_"+('res=%.4f'%res)+"_"+('snr=%.4f'%snr)
@@ -82,7 +82,7 @@ def spawn_all_retrievals(max_processes, root_dir, CH4, res, snr):
         
 if __name__ == "__main__":
     
-    root_dir = "water_bandpass_results"
+    root_dir = "results"
     max_processes = 48
     
     CH4_1 = [100.0e-6, 500.0e-6, 1000.0e-6, 5000.0e-6, 10000.0e-6]
