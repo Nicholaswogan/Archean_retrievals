@@ -44,7 +44,7 @@ def spawn_all_retrievals(max_processes, root_dir, nt):
             else:
                 nc+=1
                 
-        if nc == nt - 1:
+        if nc == nt:
             break
     
         # if retrievals are less than max process,
