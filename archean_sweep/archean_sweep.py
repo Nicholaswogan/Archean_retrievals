@@ -11,7 +11,7 @@ def bandpass_end(lam2, B):
     return lam2/(B + 1)
 
 def get_filename(root_dir, B, CH4, res, snr):
-    file = ('B=%.4f'%B)+"_"('CH4=%.4e'%CH4)+"_"+('res=%.4f'%res)+"_"+('snr=%.4f'%snr)
+    file = ('B=%.4f'%B)+"_"+('CH4=%.4e'%CH4)+"_"+('res=%.4f'%res)+"_"+('snr=%.4f'%snr)
     file = root_dir + "/" + file
     return file
 
@@ -36,7 +36,7 @@ def spawn_retrieval(root_dir, B, CH4, res, snr):
     dat, err = r.noise(F2)
 
     # filename
-    file = get_filename(root_dir, CH4, res, snr)
+    file = get_filename(root_dir, B, CH4, res, snr)
 
     # spawn retrievals
     r.nested_process(dat, err, file+'_all.pkl')
@@ -76,7 +76,7 @@ def spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr):
         # if retrievals are less than max process,
         # then spawn 3 more
         if ii < len(CH4) and nr < max_processes - 3:
-            spawn_retrieval(root_dir, B[i], CH4[ii], res[ii], snr[ii])
+            spawn_retrieval(root_dir, B[ii], CH4[ii], res[ii], snr[ii])
             ii += 1
             
         finish = time.time()
@@ -115,7 +115,7 @@ if __name__ == "__main__":
                     res.append(rr)
                     snr.append(ss)
                         
-    spawn_all_retrievals(max_processes, root_dir, CH4, res, snr)
+    spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr)
                 
                 
     
