@@ -15,7 +15,7 @@ def get_filename(root_dir, B, res, snr):
     file = root_dir + "/" + file
     return file
 
-def spawn_retrieval(root_dir, B, CH4, res, snr):
+def spawn_retrieval(root_dir, B, res, snr):
     # regrid + new snr
     lam1 = bandpass_end(1.0, B)
     
