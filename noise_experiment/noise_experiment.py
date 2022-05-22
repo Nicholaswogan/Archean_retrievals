@@ -13,7 +13,7 @@ def spawn_retrieval(root_dir, F2, iter):
     dat, err = r.noise(F2)
 
     # filename
-    file = str(iter)
+    file = root_dir+'/'+str(iter)
 
     # spawn retrievals
     r.nested_process(dat, err, file+'_all.pkl')
@@ -22,11 +22,21 @@ def spawn_retrieval(root_dir, F2, iter):
     r.nested_process(dat, err, file+'_noH2O.pkl')
     r.undo_remove_gas()
     
-def spawn_all_retrievals(max_processes, root_dir, nt):
+def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR):
+    lam2 = 1
+    lam1 = lam2/(B + 1)
+    lam = np.array([0.5,0.6,lam1,lam2])
+    res = np.array([0,0,R])
+    modes = np.array([0,0,1],np.int32)
+    snr0 = np.array([4,.1,SNR])
+    lam0 = np.array([0.84])
+    r.wavelength_grid(lam, res, modes, snr0, lam0)
+    
     
     F1, F2 = r.genspec_scr()
-    
     start = time.time()
+    
+    ntt = nt*2
     
     if not os.path.isdir(root_dir):
         raise Exception(root_dir+' must exist!')
@@ -44,12 +54,12 @@ def spawn_all_retrievals(max_processes, root_dir, nt):
             else:
                 nc+=1
                 
-        if nc == nt:
+        if nc == ntt:
             break
     
         # if retrievals are less than max process,
         # then spawn 3 more
-        if ii < len(CH4) and nr < max_processes - 2:
+        if ii < len(CH4) and nr <= max_processes - 2:
             spawn_retrieval(root_dir, F2, ii)
             ii += 1
             
@@ -59,7 +69,7 @@ def spawn_all_retrievals(max_processes, root_dir, nt):
         fmt = "{:20}"
         print(fmt.format("running: "+'%i'%nr)+\
         fmt.format('completed: ''%i'%nc)+\
-        fmt.format('total: ''%i'%nt)+\
+        fmt.format('total: ''%i'%ntt)+\
         "{:30}".format('time: ''%.2f'%tot_time+' min'),end='\r')
         
         time.sleep(.1)
@@ -70,8 +80,11 @@ if __name__ == "__main__":
     root_dir = "results"
     max_processes = 48
     nt = 250
+    B = 0.2
+    R = 140
+    SNR = 10
                         
-    spawn_all_retrievals(max_processes, root_dir, nt)
+    spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR)
                 
                 
     
