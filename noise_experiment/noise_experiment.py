@@ -59,7 +59,7 @@ def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR):
     
         # if retrievals are less than max process,
         # then spawn 3 more
-        if ii < len(CH4) and nr <= max_processes - 2:
+        if nr <= max_processes - 2:
             spawn_retrieval(root_dir, F2, ii)
             ii += 1
             
