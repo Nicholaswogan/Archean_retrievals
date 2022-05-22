@@ -11,7 +11,7 @@ def bandpass_end(lam2, B):
     return lam2/(B + 1)
 
 def get_filename(root_dir, O2, B, res, snr):
-    file = ('O2=%.4e'%O2)+"_"('B=%.4f'%B)+"_"+('res=%.4f'%res)+"_"+('snr=%.4f'%snr)
+    file = ('O2=%.4e'%O2)+"_"+('B=%.4f'%B)+"_"+('res=%.4f'%res)+"_"+('snr=%.4f'%snr)
     file = root_dir + "/" + file
     return file
 
