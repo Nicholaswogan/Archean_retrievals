@@ -77,9 +77,9 @@ def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR):
         
 if __name__ == "__main__":
     
-    root_dir = "results"
+    root_dir = "results_B=0.2_R=140_SNR=10"
     max_processes = 48
-    nt = 250
+    nt = 100
     B = 0.2
     R = 140
     SNR = 10
