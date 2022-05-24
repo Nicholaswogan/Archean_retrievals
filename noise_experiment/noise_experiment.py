@@ -11,18 +11,20 @@ r = rfast.Rfast('inputs.scr')
 r.initialize_retrieval("rpars.txt")
 
 def spawn_retrieval(root_dir, F2, iter):
+    
+    # filename
+    file = root_dir+'/'+str(iter)
 
     # fake data
     dat, err = r.noise(F2)
     # save the data
     sol = {}
+    sol['lam'] = r.lam
+    sol['dlam'] = r.dlam
     sol['dat'] = dat
     sol['err'] = err
     with open(file+'_data.pkl','wb') as fil:
         pickle.dump(sol, fil)
-
-    # filename
-    file = root_dir+'/'+str(iter)
 
     # spawn retrievals
     r.nested_process(dat, err, file+'_all.pkl')
@@ -90,13 +92,13 @@ def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR, H2O):
         
 if __name__ == "__main__":
     
-    root_dir = "results_B=0.2_R=140_SNR=10"
-    max_processes = 48
+    root_dir = "results_B=0.2_R=70_SNR=10_noH2O"
+    max_processes = 40
     nt = 100
     B = 0.2
-    R = 140
+    R = 70
     SNR = 10
-    H2O = 1.3e-3
+    H2O = 0.0e-3
                         
     spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR, H2O)
                 

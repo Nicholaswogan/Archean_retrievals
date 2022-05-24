@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import time
+import pickle
 
 import rfast
 
@@ -20,11 +21,10 @@ def spawn_retrieval(root_dir, B, res, snr, lam_end = 1.0, lam_begin = None, band
     if bandpass_from_end:
         lam1 = bandpass_end(lam_end, B)
         lam_1 = np.array([0.5,0.6,lam1,lam_end])
-    else
+    else:
         lam2 = lam_begin*(1+B)
         lam_1 = np.array([0.5,0.6,lam_begin,lam2])
     
-    lam_1 = np.array([0.5,0.6,lam1,1.0])
     res_1 = np.array([0,0,res])
     modes_1 = np.array([0,0,1],np.int32)
     snr0_1 = np.array([4,.1,snr])
@@ -40,6 +40,14 @@ def spawn_retrieval(root_dir, B, res, snr, lam_end = 1.0, lam_begin = None, band
 
     # filename
     file = get_filename(root_dir, B, res, snr)
+    # save the data
+    sol = {}
+    sol['lam'] = r.lam
+    sol['dlam'] = r.dlam
+    sol['dat'] = dat
+    sol['err'] = err
+    with open(file+'_data.pkl','wb') as fil:
+        pickle.dump(sol, fil)
 
     # spawn retrievals
     r.nested_process(dat, err, file+'_all.pkl')
@@ -119,7 +127,7 @@ def experiment_1():
     
 def experiment_2():
     root_dir = "results_experiment_2"
-    max_processes = 48
+    max_processes = 40
     
     B_1 = [0.15, 0.2, 0.3, 0.4]
     res_1 = [70, 140]
