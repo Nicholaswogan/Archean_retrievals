@@ -9,7 +9,7 @@ conda activate rfast
 # rfast
 git clone https://github.com/Nicholaswogan/rfast.git
 cd rfast
-git checkout 8064b821710e0fc49a4e2128625b5ed22ad28e8a
+git checkout b3b4fca02f75d2c8acf0eb7913af8e9e1db9eeb1
 python -m pip install --no-deps --no-build-isolation . -v
 cd ..
 rm -rf rfast
