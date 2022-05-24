@@ -15,11 +15,15 @@ def get_filename(root_dir, B, CH4, res, snr):
     file = root_dir + "/" + file
     return file
 
-def spawn_retrieval(root_dir, B, CH4, res, snr):
+def spawn_retrieval(root_dir, B, CH4, res, snr, lam_end = 1.0, lam_begin = None, bandpass_from_end = True, FpFs_err = None):
     # regrid + new snr
-    lam1 = bandpass_end(1.0, B)
-    
-    lam_1 = np.array([0.5,0.6,lam1,1.0])
+    if bandpass_from_end:
+        lam1 = bandpass_end(lam_end, B)
+        lam_1 = np.array([0.5,0.6,lam1,lam_end])
+    else
+        lam2 = lam_begin*(1+B)
+        lam_1 = np.array([0.5,0.6,lam_begin,lam2])
+        
     res_1 = np.array([0,0,res])
     modes_1 = np.array([0,0,1],np.int32)
     snr0_1 = np.array([4,.1,snr])
@@ -33,7 +37,10 @@ def spawn_retrieval(root_dir, B, CH4, res, snr):
 
     # fake data
     F1, F2 = r.genspec_scr()
-    dat, err = r.noise(F2)
+    if FpFs_err is None:
+        dat, err = r.noise(F2)
+    else:
+        dat, err = r.noise_at_FpFs(F2, FpFs_err)
 
     # filename
     file = get_filename(root_dir, B, CH4, res, snr)
@@ -49,7 +56,7 @@ def spawn_retrieval(root_dir, B, CH4, res, snr):
     r.nested_process(dat, err, file+'_noH2O.pkl')
     r.undo_remove_gas()
     
-def spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr):
+def spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr, **kwargs):
     
     start = time.time()
     
@@ -76,7 +83,7 @@ def spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr):
         # if retrievals are less than max process,
         # then spawn 3 more
         if ii < len(CH4) and nr < max_processes - 3:
-            spawn_retrieval(root_dir, B[ii], CH4[ii], res[ii], snr[ii])
+            spawn_retrieval(root_dir, B[ii], CH4[ii], res[ii], snr[ii], **kwargs)
             ii += 1
             
         finish = time.time()
@@ -91,8 +98,9 @@ def spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr):
         time.sleep(.1)
         
         
-        
-if __name__ == "__main__":
+def experiment_1():
+    
+    # does bandpasses that terminate at 1 um
     
     root_dir = "results"
     max_processes = 48
@@ -116,11 +124,36 @@ if __name__ == "__main__":
                     snr.append(ss)
                         
     spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr)
-                
-                
     
+def experiment_2():
     
-        
+    # does bandpasses that begin at 
     
-
+    root_dir = "results_experiment_2"
+    max_processes = 48
+    
+    B_1 = [0.15, 0.2, 0.3, 0.4]
+    CH4_1 = [500.0e-6, 1000.0e-6, 5000.0e-6, 10000.0e-6]
+    res_1 = [70, 140]
+    snr_1 = [5, 10, 15, 20]
+    
+    B = []
+    CH4 = []
+    snr = []
+    res = []
+    for bb in B_1:
+        for val in CH4_1:
+            for rr in res_1:
+                for ss in snr_1:
+                    B.append(bb)
+                    CH4.append(val)
+                    res.append(rr)
+                    snr.append(ss)
+                        
+    spawn_all_retrievals(max_processes, root_dir, B, CH4, res, snr, \
+                        lam_end = None, lam_begin = 0.65, bandpass_from_end = False, FpFs_err = 3.55e-10)
+    
+if __name__ == "__main__":
+    experiment_2()
+    
     

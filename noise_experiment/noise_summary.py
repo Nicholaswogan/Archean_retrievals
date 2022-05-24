@@ -2,41 +2,42 @@ import numpy as np
 import pickle
 from rfast import detection_sigma
 
-outfile = "noise_summary.pkl"
-root_dir = "results_B=0.2_R=140_SNR=10"
+def write_summary(root_dir, outfile):
 
-sol = []
-ii = 0
-while True:
-    try:
+    sol = []
+    ii = 0
     
-        tmp = {}
+    while True:
+        try:
+            tmp = {}
 
-        file = root_dir+"/"+str(ii)
+            file = root_dir+"/"+str(ii)
 
-        with open(file+'_all.pkl','rb') as f:
-            results = pickle.load(f)
+            with open(file+'_all.pkl','rb') as f:
+                results = pickle.load(f)
+            all_evidence = results['logz'][-1]
+            tmp['evidence_all'] = all_evidence
 
-        all_evidence = results['logz'][-1]
-        tmp['evidence_all'] = all_evidence
+            with open(file+'_noH2O.pkl','rb') as f:
+                results = pickle.load(f)
+            H2O_evidence = results['logz'][-1]
+            tmp['evidence_H2O'] = H2O_evidence
+            lnB_H2O = all_evidence - H2O_evidence
 
-        with open(file+'_noH2O.pkl','rb') as f:
-            results = pickle.load(f)
-
-        H2O_evidence = results['logz'][-1]
-        tmp['evidence_H2O'] = H2O_evidence
-
-        lnB_H2O = all_evidence - H2O_evidence
-
-        tmp['sig_H2O'] = detection_sigma(lnB_H2O)
-        
-        print(ii)
+            tmp['sig_H2O'] = detection_sigma(lnB_H2O)
             
-        sol.append(tmp)
-    except:
-        break
-    
-    ii += 1
-    
-with open(outfile,'wb') as f:
-    pickle.dump(sol,f)
+            print(ii)
+                
+            sol.append(tmp)
+        except FileNotFoundError:
+            break
+        
+        ii += 1 
+        
+    with open(outfile,'wb') as f:
+        pickle.dump(sol,f)
+        
+if __name__ == "__main__":
+    outfile = "noise_summary.pkl"
+    root_dir = "results_B=0.2_R=140_SNR=10"
+    write_summary(root_dir, outfile)

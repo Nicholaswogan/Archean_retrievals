@@ -1,8 +1,11 @@
 import numpy as np
 import os
 import time
+import pickle
 
 import rfast
+
+np.random.seed(0)
 
 r = rfast.Rfast('inputs.scr')
 r.initialize_retrieval("rpars.txt")
@@ -11,6 +14,12 @@ def spawn_retrieval(root_dir, F2, iter):
 
     # fake data
     dat, err = r.noise(F2)
+    # save the data
+    sol = {}
+    sol['dat'] = dat
+    sol['err'] = err
+    with open(file+'_data.pkl','wb') as fil:
+        pickle.dump(sol, fil)
 
     # filename
     file = root_dir+'/'+str(iter)
@@ -22,7 +31,7 @@ def spawn_retrieval(root_dir, F2, iter):
     r.nested_process(dat, err, file+'_noH2O.pkl')
     r.undo_remove_gas()
     
-def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR):
+def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR, H2O):
     lam2 = 1
     lam1 = lam2/(B + 1)
     lam = np.array([0.5,0.6,lam1,lam2])
@@ -32,6 +41,10 @@ def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR):
     lam0 = np.array([0.84])
     r.wavelength_grid(lam, res, modes, snr0, lam0)
     
+    # set H2O
+    ind = list(r.scr.species_r).index('h2o')
+    r.scr.f0[ind] = H2O
+    r.scr_genspec_inputs[0]= r.scr.f0
     
     F1, F2 = r.genspec_scr()
     start = time.time()
@@ -58,7 +71,7 @@ def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR):
             break
     
         # if retrievals are less than max process,
-        # then spawn 3 more
+        # then spawn 2 more
         if nr <= max_processes - 2:
             spawn_retrieval(root_dir, F2, ii)
             ii += 1
@@ -83,8 +96,9 @@ if __name__ == "__main__":
     B = 0.2
     R = 140
     SNR = 10
+    H2O = 1.3e-3
                         
-    spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR)
+    spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR, H2O)
                 
                 
     
