@@ -38,6 +38,6 @@ def write_summary(root_dir, outfile):
         pickle.dump(sol,f)
         
 if __name__ == "__main__":
-    outfile = "noise_summary.pkl"
-    root_dir = "results_B=0.2_R=140_SNR=10"
+    outfile = "noise_summary_B=0.2_R=70_SNR=5_noH2O.pkl"
+    root_dir = "results_B=0.2_R=70_SNR=5_noH2O"
     write_summary(root_dir, outfile)

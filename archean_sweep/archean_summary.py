@@ -64,6 +64,6 @@ def summary_experiment_2():
     write_summary(root_dir, outfile, B_1, CH4_1, res_1, snr_1)
     
 if __name__ == "__main__":
-    summary_experiment_1()
+    summary_experiment_2()
 
 

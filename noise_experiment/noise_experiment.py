@@ -87,17 +87,17 @@ def spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR, H2O):
         fmt.format('total: ''%i'%ntt)+\
         "{:30}".format('time: ''%.2f'%tot_time+' min'),end='\r')
         
-        time.sleep(.1)
+        time.sleep(1)
         
         
 if __name__ == "__main__":
     
-    root_dir = "results_B=0.2_R=70_SNR=10_noH2O"
+    root_dir = "results_B=0.2_R=140_SNR=5_noH2O"
     max_processes = 40
     nt = 100
     B = 0.2
-    R = 70
-    SNR = 10
+    R = 140
+    SNR = 5
     H2O = 0.0e-3
                         
     spawn_all_retrievals(max_processes, root_dir, nt, B, R, SNR, H2O)

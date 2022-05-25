@@ -62,7 +62,7 @@ def summary_experiment_1():
     write_summary(root_dir, outfile, B_1, res_1, snr_1)
     
 # experiment 2
-def summary_experiment_1():
+def summary_experiment_2():
     root_dir = "results_experiment_2"
     outfile = "modern_summary_experiment_2.pkl"
     B_1 = [0.15, 0.2, 0.3, 0.4]
@@ -71,4 +71,4 @@ def summary_experiment_1():
     write_summary(root_dir, outfile, B_1, res_1, snr_1)
     
 if __name__ == "__main__":
-    summary_experiment_1()
+    summary_experiment_2()
